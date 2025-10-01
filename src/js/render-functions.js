@@ -1,15 +1,95 @@
-// У файлі render - functions.js створи екземпляр SimpleLightbox для роботи з модальним вікном
-// та зберігай функції для відображення елементів інтерфейсу:
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
-function createGallery(images) {}
-// Ця функція повинна приймати масив images, створювати HTML - розмітку для галереї, додавати її в
-// контейнер галереї та викликати метод екземпляра SimpleLightbox refresh().Нічого не повертає.
+// Функція створення та додавання розмітки галереї
 
-function clearGallery() {}
-// Ця функція нічого не приймає та повинна очищати вміст контейнера галереї.Нічого не повертає.
+export function createGallery(images) {
+  const gallery = document.querySelector('.gallery');
 
-function showLoader() {}
-// Ця функція нічого не приймає, повинна додавати клас для відображення лоадера.Нічого не повертає.
+  let galleryArr = [];
 
-function hideLoader() {}
-// Ця функція нічого не приймає, повинна прибирати клас для відображення лоадера.Нічого не повертає.
+  images.forEach(
+    ({
+      webformatURL,
+      largeImageURL,
+      tags,
+      likes,
+      views,
+      comments,
+      downloads,
+    }) => {
+      const item = document.createElement('li');
+      item.classList.add('gallery-item');
+
+      const link = document.createElement('a');
+      link.setAttribute('href', largeImageURL);
+      item.append(link);
+
+      const image = document.createElement('img');
+      image.setAttribute('src', webformatURL);
+      image.setAttribute('alt', tags);
+      link.append(image);
+
+      // Створення і додавання опису картинки
+
+      const description = document.createElement('ul');
+      description.classList.add('description');
+      const descriptionSettings = ['Likes', 'Vievs', 'Comments', 'Downloads'];
+      for (let i = 0; i < 4; i++) {
+        const descriptionItem = document.createElement('li');
+        const descriptionState = document.createElement('p');
+        descriptionState.classList.add('description-state');
+        descriptionState.textContent = descriptionSettings[i];
+        const descriptionValue = document.createElement('p');
+        descriptionValue.classList.add('description-value');
+        if (i === 0) {
+          descriptionValue.textContent = likes;
+        } else if (i === 1) {
+          descriptionValue.textContent = views;
+        } else if (i === 2) {
+          descriptionValue.textContent = comments;
+        } else if (i === 3) {
+          descriptionValue.textContent = downloads;
+        }
+        descriptionItem.append(descriptionState);
+        descriptionItem.append(descriptionValue);
+        description.append(descriptionItem);
+      }
+      item.append(description);
+
+      galleryArr.push(item);
+    }
+  );
+
+  gallery.append(...galleryArr);
+
+  const settings = {
+    captionsData: 'alt',
+    captionDelay: 250,
+  };
+  let galleryBox = new SimpleLightbox('.gallery li a', settings);
+  galleryBox.refresh();
+}
+
+// Очищення галереї
+
+export function clearGallery() {
+  const items = document.querySelectorAll('.gallery-item');
+  if (items.length != 0) {
+    items.forEach(elem => elem.remove());
+  }
+}
+
+// Показуємо індикатор завантаження
+
+export function showLoader() {
+  const loading = document.querySelector('.loader');
+  loading.classList.toggle('visible');
+}
+
+// Прибираємо індикатор завантаження
+
+export function hideLoader() {
+  const loading = document.querySelector('.loader');
+  loading.classList.toggle('visible');
+}

@@ -7,13 +7,13 @@ import 'izitoast/dist/css/iziToast.min.css';
 
 // Імпорти модулів
 
+import * as galleryMethods from './js/render-functions';
 import getImagesByQuery from './js/pixabay-api';
 
 // Обробка сабміту форми
 
 const form = document.querySelector('.form');
 form.addEventListener('submit', startSearch);
-const loading = document.querySelector('.loadimg-message'); // Індикатор завантаження
 
 function startSearch(event) {
   event.preventDefault();
@@ -21,15 +21,16 @@ function startSearch(event) {
   if (searchWords != '') {
     // Запит та обробка його результату
 
-    loading.classList.toggle('visible'); // Показ індикатора завандаження
+    galleryMethods.showLoader(); // Показ індикатора завандаження
     getImagesByQuery(searchWords)
       .then(value => {
         // Обробка результату відповіді
 
-        loading.classList.toggle('visible'); // Приховуємо індикатор завантаження
+        galleryMethods.hideLoader(); // Приховуємо індикатор завантаження
         // Виводимо всовіщення про невдалий пошук
 
         if (value.length === 0) {
+          galleryMethods.clearGallery();
           iziToast.warning({
             message:
               'Sorry, there are no images matching your search query. Please try again!',
@@ -39,14 +40,15 @@ function startSearch(event) {
             position: 'center',
           });
         } else {
-          console.log(value);
+          galleryMethods.clearGallery();
+          galleryMethods.createGallery(value);
         }
       })
       .catch(error => {
         // Обробка помилки
 
         console.log(error);
-        loading.classList.toggle('visible'); // Приховуємо індикатор завантаженняw
+        galleryMethods.hideLoader(); // Приховуємо індикатор завантаженняw
       });
     form.reset();
   } else {
