@@ -2,6 +2,7 @@ import axios from 'axios';
 
 export default function getImagesByQuery(query) {
   // Створення параметрів запиту
+
   const searchParams = new URLSearchParams({
     key: '52540887-918f2903ad65f90a6d5993705',
     q: query,
@@ -15,5 +16,5 @@ export default function getImagesByQuery(query) {
   return axios
     .get(`https://pixabay.com/api/?${searchParams}`)
     .then(response => response.data.hits)
-    .catch(error => console.log(error));
+    .catch(error => error);
 }
